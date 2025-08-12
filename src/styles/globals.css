@@ -2,6 +2,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply h-full bg-black;
+    margin: 0;
+  }
+}
+
+@layer utilities {
+  .bg-size-200 { background-size: 200% 200%; }
+}
 :root {
   --background: #ffffff;
   --foreground: #171717;
