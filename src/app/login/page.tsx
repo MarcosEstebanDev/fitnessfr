@@ -1,63 +1,79 @@
 "use client";
 import Link from "next/link";
-import Image from "next/image";
-import { LoginForm } from "../../components/forms/LoginForm";
+import { useState } from "react";
+import HeroBackground from "../../components/HeroBackground";
 
-export default function Login() {
+export default function LoginPage() {
+  const [loading, setLoading] = useState(false);
+
+  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setLoading(true);
+    setTimeout(() => setLoading(false), 1500);
+  }
+
   return (
-    <main className="relative min-h-screen flex items-center justify-center">
-      {/* Imagen de fondo opaca */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=1200&q=80"
-          alt="Fondo gimnasio"
-          fill
-          style={{ objectFit: "cover" }}
-          className="opacity-40"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-indigo-800/70 to-blue-700/80" />
-      </div>
+    <main className="relative h-[calc(100dvh-64px)] overflow-hidden flex items-center justify-center px-4">
+      <HeroBackground src="https://images.unsplash.com/photo-1517963879433-6ad2b056d712?auto=format&fit=crop&w=1600&q=80" />
+      <div className="w-[min(480px,95vw)] bg-white/90 backdrop-blur-xl border border-rose-200 rounded-2xl shadow-2xl p-6 sm:p-8">
+        <header className="mb-6 text-center">
+          <h1 className="text-3xl font-black bg-gradient-to-r from-rose-500 via-red-500 to-rose-700 bg-clip-text text-transparent">
+            Iniciar sesión
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">Accede a tu cuenta</p>
+        </header>
 
-      <div className="container mx-auto flex flex-col items-center justify-center py-12 px-4">
-        <div className="grid grid-cols-1 gap-8 w-full max-w-3xl">
-          {/* Card principal */}
-          <div className="relative bg-white/50 backdrop-blur-2xl rounded-3xl shadow-2xl border border-indigo-200 flex flex-col items-center px-12 py-16 overflow-hidden min-h-[520px]">
-            {/* Ícono de mancuernas */}
-            <div className="flex justify-center items-center mt-4 mb-6">
-              <span className="bg-indigo-100 text-indigo-600 rounded-full p-5 shadow-lg animate-bounce-slow">
-                <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
-                  <rect x="2" y="9" width="3" height="6" rx="1" fill="currentColor" />
-                  <rect x="19" y="9" width="3" height="6" rx="1" fill="currentColor" />
-                  <rect x="7" y="11" width="10" height="2" rx="1" fill="currentColor" />
-                  <rect x="5" y="7" width="2" height="10" rx="1" fill="currentColor" />
-                  <rect x="17" y="7" width="2" height="10" rx="1" fill="currentColor" />
-                </svg>
-              </span>
-            </div>
-
-            <h2 className="text-3xl font-extrabold mb-2 text-gray-900 text-center tracking-tight drop-shadow bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-700 bg-clip-text text-transparent bg-size-200 animate-gradient-move">
-              Iniciar sesión
-            </h2>
-
-            <p className="text-indigo-700 mb-8 text-center animate-fade-in-slow relative">
-              Ingresa para llevar el control de tu progreso fitness.
-              <span
-                className="absolute left-1/2 -bottom-2 w-2/3 h-1 bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-600 rounded-full opacity-70 animate-underline-slide"
-                style={{ transform: "translateX(-50%)" }}
-              />
-            </p>
-
-            <LoginForm />
-
-            <p className="mt-8 text-center text-gray-500 text-sm">
-              ¿No tienes cuenta?{" "}
-              <Link href="/register" className="text-indigo-700 hover:underline font-semibold">
-                Regístrate
-              </Link>
-            </p>
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-semibold text-rose-700">
+              Email
+            </label>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              required
+              className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="tu@email.com"
+            />
           </div>
-        </div>
+          <div>
+            <label htmlFor="password" className="block text-sm font-semibold text-rose-700">
+              Contraseña
+            </label>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              required
+              className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
+              placeholder="••••••••"
+            />
+          </div>
+          <div className="flex items-center justify-between">
+            <label className="inline-flex items-center gap-2 select-none">
+              <input type="checkbox" className="h-4 w-4 rounded border-rose-300 text-rose-600 focus:ring-rose-500" />
+              <span className="text-sm text-gray-700">Recordarme</span>
+            </label>
+            <button type="button" className="text-sm font-semibold text-rose-700 hover:underline">
+              ¿Olvidaste tu contraseña?
+            </button>
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 font-bold text-white bg-gradient-to-r from-rose-500 to-red-700 shadow-lg hover:from-rose-600 hover:to-red-800 disabled:opacity-60"
+          >
+            {loading ? "Ingresando..." : "Ingresar"}
+          </button>
+        </form>
+
+        <p className="mt-6 text-center text-sm text-gray-700">
+          ¿No tienes cuenta?{" "}
+          <Link href="/register" className="font-semibold text-rose-700 hover:underline">
+            Regístrate
+          </Link>
+        </p>
       </div>
     </main>
   );

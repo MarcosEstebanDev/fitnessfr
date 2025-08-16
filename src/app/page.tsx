@@ -1,26 +1,15 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
+import HeroBackground from "../components/HeroBackground";
 
 export default function Home() {
   return (
     <main className="relative min-h-screen flex items-center justify-center">
-      {/* Imagen de fondo opaca */}
-      <div className="absolute inset-0 -z-10">
-        <Image
-          src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=1200&q=80"
-          alt="Fondo gimnasio"
-          fill
-          style={{ objectFit: "cover" }}
-          className="opacity-40"
-          priority
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/80 via-indigo-800/70 to-blue-700/80" />
-      </div>
-      <div className="w-full max-w-4xl bg-white/50 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl border border-indigo-200 flex flex-col items-center overflow-hidden transition-transform duration-300 hover:scale-[1.01] hover:shadow-3xl">
+      <HeroBackground src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=1600&q=80" />
+      <div className="w-full max-w-4xl bg-white/50 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl border border-rose-200 flex flex-col items-center overflow-hidden transition-transform duration-300 hover:scale-[1.01] hover:shadow-3xl">
         {/* Icono de mancuernas */}
         <div className="flex justify-center items-center mt-12 mb-4">
-          <span className="bg-indigo-100 text-indigo-600 rounded-full p-5 shadow-lg animate-bounce-slow">
+          <span className="bg-rose-100 text-rose-600 rounded-full p-5 shadow-lg animate-bounce-slow">
             {/* Ícono de mancuernas SVG */}
             <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
               <rect x="2" y="9" width="3" height="6" rx="1" fill="currentColor" />
@@ -33,27 +22,27 @@ export default function Home() {
         </div>
         {/* Contenido principal */}
         <div className="flex flex-col items-center px-10 py-10 w-full">
-          <span className="uppercase tracking-widest text-xs text-indigo-600 font-bold mb-6 animate-fade-in">
+          <span className="uppercase tracking-widest text-xs text-rose-600 font-bold mb-6 animate-fade-in">
             FitApp
           </span>
-          <h1 className="text-5xl md:text-6xl font-black mb-6 text-gray-900 text-center tracking-tight drop-shadow-lg font-sans bg-gradient-to-r from-indigo-500 via-blue-500 to-indigo-700 bg-clip-text text-transparent animate-gradient-move">
+          <h1 className="text-5xl md:text-6xl font-black mb-6 text-gray-900 text-center tracking-tight drop-shadow-lg font-sans bg-gradient-to-r from-rose-500 via-red-500 to-rose-700 bg-clip-text text-transparent animate-gradient-move">
             Tu progreso,{" "}
-            <span className="text-indigo-700">tu mejor versión</span>
+            <span className="text-rose-700">tu mejor versión</span>
           </h1>
-          <h2 className="text-2xl md:text-3xl font-semibold mb-12 text-indigo-700 text-center relative animate-fade-in-slow">
+          <h2 className="text-2xl md:text-3xl font-semibold mb-12 text-rose-700 text-center relative animate-fade-in-slow">
             <span className="relative z-10">
               Registra tus entrenamientos, controla tu avance y alcanza tus
               objetivos fitness.
             </span>
             <span
-              className="absolute left-1/2 -bottom-2 w-2/3 h-1 bg-gradient-to-r from-indigo-400 via-blue-400 to-indigo-600 rounded-full opacity-70 animate-underline-slide"
+              className="absolute left-1/2 -bottom-2 w-2/3 h-1 bg-gradient-to-r from-rose-400 via-red-400 to-rose-600 rounded-full opacity-70 animate-underline-slide"
               style={{ transform: "translateX(-50%)" }}
             />
           </h2>
           <div className="mb-14 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-2xl">
             {/* Rutinas personalizadas */}
-            <div className="flex flex-col items-center bg-white/95 border border-indigo-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-indigo-50/70 duration-200 group">
-              <span className="bg-indigo-100 text-indigo-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-indigo-200 transition">
+            <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+              <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
                 {/* Icono calendario */}
                 <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
                   <rect
@@ -87,8 +76,8 @@ export default function Home() {
               </span>
             </div>
             {/* Progreso y métricas */}
-            <div className="flex flex-col items-center bg-white/95 border border-indigo-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-indigo-50/70 duration-200 group">
-              <span className="bg-indigo-100 text-indigo-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-indigo-200 transition">
+            <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+              <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
                 {/* Icono gráfico de barras */}
                 <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
                   <rect
@@ -152,8 +141,8 @@ export default function Home() {
               </span>
             </div>
             {/* Comunidad y motivación */}
-            <div className="flex flex-col items-center bg-white/95 border border-indigo-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-indigo-50/70 duration-200 group">
-              <span className="bg-indigo-100 text-indigo-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-indigo-200 transition">
+            <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+              <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
                 {/* Icono comunidad */}
                 <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
                   <circle
@@ -174,68 +163,33 @@ export default function Home() {
           </div>
           <Link
             href="/register"
-            className="w-full block text-center px-10 py-5 bg-gradient-to-r from-indigo-500 to-blue-700 text-white rounded-2xl font-extrabold shadow-xl hover:from-indigo-600 hover:to-blue-800 transition-all duration-200 hover:scale-105 text-2xl tracking-wide mb-8"
+            className="w-full block text-center px-10 py-5 bg-gradient-to-r from-rose-500 to-red-700 text-white rounded-2xl font-extrabold shadow-xl hover:from-rose-600 hover:to-red-800 transition-all duration-200 hover:scale-105 text-2xl tracking-wide mb-8"
           >
             ¡Empieza ahora!
           </Link>
           <nav className="mt-2 flex justify-center gap-10 text-lg font-semibold opacity-90">
             <Link
               href="/login"
-              className="text-indigo-700 hover:underline transition"
+              className="text-rose-700 hover:underline transition"
             >
               Iniciar sesión
             </Link>
             <Link
               href="/workout"
-              className="text-gray-700 hover:text-indigo-700 transition"
+              className="text-gray-700 hover:text-rose-700 transition"
             >
               Workout
             </Link>
             <Link
               href="/progress"
-              className="text-gray-700 hover:text-indigo-700 transition"
+              className="text-gray-700 hover:text-rose-700 transition"
             >
               Progreso
             </Link>
           </nav>
         </div>
       </div>
-      {/* Animaciones personalizadas */}
-      <style jsx>{`
-        .animate-gradient-move {
-          background-size: 200% 200%;
-          animation: gradient-move 3s ease-in-out infinite;
-        }
-        @keyframes gradient-move {
-          0% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-          100% { background-position: 0% 50%; }
-        }
-        .animate-fade-in {
-          animation: fadeIn 1.2s ease;
-        }
-        .animate-fade-in-slow {
-          animation: fadeIn 2s ease;
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(24px);}
-          to { opacity: 1; transform: none;}
-        }
-        .animate-underline-slide {
-          animation: underlineSlide 1.2s cubic-bezier(.4,0,.2,1);
-        }
-        @keyframes underlineSlide {
-          from { width: 0; opacity: 0; }
-          to { width: 66%; opacity: 0.7; }
-        }
-        .animate-bounce-slow {
-          animation: bounceSlow 2.2s infinite;
-        }
-        @keyframes bounceSlow {
-          0%, 100% { transform: translateY(0);}
-          50% { transform: translateY(-10px);}
-        }
-      `}</style>
+      {/* Animaciones personalizadas — movidas a styles/global.css */}
     </main>
   );
 }

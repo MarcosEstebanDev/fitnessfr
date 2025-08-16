@@ -1,0 +1,60 @@
+/* Animaciones Home */
+@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    @apply h-full bg-black; /* fallback oscuro detrás de la imagen */
+    margin: 0;
+  }
+}
+
+@layer utilities {
+  .bg-size-200 { background-size: 200% 200%; }
+}
+
+.animate-gradient-move {
+  background-size: 200% 200%;
+  animation: gradient-move 3s ease-in-out infinite;
+}
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.animate-fade-in { animation: fadeIn 1.2s ease; }
+.animate-fade-in-slow { animation: fadeIn 2s ease; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-underline-slide { animation: underlineSlide 1.2s cubic-bezier(.4,0,.2,1); }
+@keyframes underlineSlide {
+  from { width: 0; opacity: 0; }
+  to { width: 66%; opacity: 0.7; }
+}
+.animate-bounce-slow { animation: bounceSlow 2.2s infinite; }
+@keyframes bounceSlow {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Overrides react-date-range (paleta rose/red suave) */
+.rdrCalendarWrapper { border-radius: 1rem; }
+.rdrMonthAndYearPickers select { color: #be123c; font-weight: 700; } /* rose-700 */
+.rdrWeekDay { color: #e11d48 !important; font-weight: 700; } /* rose-600 */
+.rdrDayNumber span { font-weight: 700; }
+.rdrDayToday .rdrDayNumber span:after { background: #e11d48 !important; } /* rose-600 */
+.rdrDaySelected, .rdrDayStartPreview, .rdrDayEndPreview {
+  background: #e11d48 !important; /* rose-600 */
+  color: #fff !important;
+}
+
+/* Sin scroll en todo el app */
+html, body {
+  height: 100dvh;
+  overflow: hidden;          /* bloquea scroll global */
+  overscroll-behavior: none; /* evita rubber band en touch */
+}
