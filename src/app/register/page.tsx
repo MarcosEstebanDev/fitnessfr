@@ -1,23 +1,48 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import HeroBackground from "../../components/HeroBackground";
 
 export default function RegisterPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function validatePasswordsMatch(form: HTMLFormElement) {
+    const password = (form.elements.namedItem("password") as HTMLInputElement)?.value || "";
+    const confirm = (form.elements.namedItem("confirm") as HTMLInputElement);
+    if (confirm && password !== confirm.value) {
+      confirm.setCustomValidity("Las contraseñas no coinciden.");
+      confirm.reportValidity();
+      confirm.setCustomValidity("");
+      return false;
+    }
+    return true;
+  }
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const form = new FormData(e.currentTarget);
-    const pass = String(form.get("password") || "");
-    const confirm = String(form.get("confirm") || "");
-    if (pass !== confirm) {
-      alert("Las contraseñas no coinciden.");
+    const form = e.currentTarget;
+
+    if (!form.checkValidity()) {
+      form.reportValidity();
       return;
     }
+    if (!validatePasswordsMatch(form)) return;
+
     setLoading(true);
-    // TODO: lógica real de registro
-    setTimeout(() => setLoading(false), 1000);
+    try {
+      // TODO: reemplazar por tu llamada real al backend (fetch/axios)
+      const data = Object.fromEntries(new FormData(form));
+      console.log("register payload", data);
+      await new Promise((r) => setTimeout(r, 900));
+      // TODO: guardar token/usuario si aplica
+      router.replace("/"); // Cambiar a "/workout" si quieres
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -41,6 +66,8 @@ export default function RegisterPage() {
                 id="firstName"
                 name="firstName"
                 required
+                minLength={2}
+                autoComplete="given-name"
                 className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
                 placeholder="María"
               />
@@ -53,6 +80,8 @@ export default function RegisterPage() {
                 id="lastName"
                 name="lastName"
                 required
+                minLength={2}
+                autoComplete="family-name"
                 className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
                 placeholder="Pérez"
               />
@@ -68,6 +97,7 @@ export default function RegisterPage() {
               name="email"
               type="email"
               required
+              autoComplete="email"
               className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
               placeholder="tu@email.com"
             />
@@ -83,7 +113,10 @@ export default function RegisterPage() {
                 name="password"
                 type="password"
                 required
-                minLength={6}
+                minLength={8}
+                pattern="(?=.*[A-Za-z])(?=.*\d).{8,}"
+                title="Mínimo 8 caracteres, al menos 1 letra y 1 número"
+                autoComplete="new-password"
                 className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
                 placeholder="••••••••"
               />
@@ -97,7 +130,8 @@ export default function RegisterPage() {
                 name="confirm"
                 type="password"
                 required
-                minLength={6}
+                minLength={8}
+                autoComplete="new-password"
                 className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
                 placeholder="••••••••"
               />

@@ -1,15 +1,35 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import HeroBackground from "../../components/HeroBackground";
 
 export default function LoginPage() {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    const form = e.currentTarget;
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => setLoading(false), 1500);
+    try {
+      // ...existing code...
+      // TODO: reemplazar por tu llamada real al backend (fetch/axios)
+      await new Promise((r) => setTimeout(r, 800));
+      // TODO: guardar token/usuario si aplica
+      router.replace("/"); // Cambiar a "/workout" si quieres
+      // ...existing code...
+    } catch (err) {
+      // Aquí podrías mostrar un mensaje de error de servidor
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -33,6 +53,7 @@ export default function LoginPage() {
               name="email"
               type="email"
               required
+              autoComplete="email"
               className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
               placeholder="tu@email.com"
             />
@@ -46,6 +67,8 @@ export default function LoginPage() {
               name="password"
               type="password"
               required
+              minLength={8}
+              autoComplete="current-password"
               className="mt-1 w-full rounded-xl border border-rose-200 bg-white px-3 py-2 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
               placeholder="••••••••"
             />
