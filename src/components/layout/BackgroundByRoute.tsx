@@ -5,36 +5,53 @@ import { usePathname } from "next/navigation";
 import { ROUTE_BACKGROUNDS } from "../../theme/brand";
 
 const DEFAULT_BG =
-  "https://images.unsplash.com/photo-1554284126-aa88f22d8b74?q=80&w=1600&auto=format&fit=crop";
+  "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?auto=format&fit=crop&w=1600&q=80";
+
+// Guarda la imagen seleccionada por ruta durante la sesión
+const selectedImages: Record<string, string> = {};
 
 function resolveImage(pathname: string) {
-  if (ROUTE_BACKGROUNDS[pathname]) return ROUTE_BACKGROUNDS[pathname];
-  const first = "/" + pathname.split("/").filter(Boolean)[0];
-  return ROUTE_BACKGROUNDS[first] ?? ROUTE_BACKGROUNDS["/"] ?? DEFAULT_BG;
+  const bg = ROUTE_BACKGROUNDS[pathname as keyof typeof ROUTE_BACKGROUNDS];
+  if (Array.isArray(bg)) {
+    if (!selectedImages[pathname]) {
+      selectedImages[pathname] = bg[Math.floor(Math.random() * bg.length)];
+    }
+    return selectedImages[pathname];
+  }
+  if (bg) return bg;
+  return DEFAULT_BG;
 }
 
 export function BackgroundByRoute() {
   const pathname = usePathname() || "/";
-  const resolved = resolveImage(pathname);
-  const [image, setImage] = useState(resolved);
+  const [image, setImage] = useState(resolveImage(pathname));
+  const [fade, setFade] = useState(true);
 
   useEffect(() => {
+    setFade(false); // inicia fade-out
     const url = resolveImage(pathname);
-    // Preload y fallback si falla
     const img = new Image();
-    img.onload = () => setImage(url);
+    img.onload = () => {
+      setTimeout(() => {
+        setImage(url);
+        setFade(true); // inicia fade-in
+      }, 300); // duración fade-out
+    };
     img.onerror = () => setImage(DEFAULT_BG);
     img.src = url;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
 
   return (
-    <div aria-hidden className="pointer-events-none fixed inset-0 -z-10">
+    <div
+      aria-hidden
+      className="pointer-events-none fixed inset-0 -z-10 h-screen w-screen"
+    >
       <div
-        className="absolute inset-0"
+        className={`absolute inset-0 h-full w-full transition-opacity duration-700 ${
+          fade ? "opacity-100" : "opacity-0"
+        }`}
         style={{
-          // Tinte oscuro rojizo + imagen
-          backgroundImage: `linear-gradient(180deg, rgba(20,10,10,0.76), rgba(12,4,4,0.88)), url('${image}')`,
+          backgroundImage: `linear-gradient(180deg, rgba(20,10,10,0.45), rgba(12,4,4,0.55)), url('${image}')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}

@@ -3,7 +3,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
+body {
+  background: transparent;
+}
 @layer base {
   html, body {
     @apply h-full bg-black; /* fallback oscuro detrás de la imagen */

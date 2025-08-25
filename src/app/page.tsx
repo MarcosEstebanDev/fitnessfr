@@ -1,195 +1,249 @@
 "use client";
+import { motion } from "framer-motion";
+import { BackgroundByRoute } from "@/components/layout/BackgroundByRoute";
 import Link from "next/link";
-import HeroBackground from "../components/HeroBackground";
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen flex items-center justify-center">
-      <HeroBackground src="https://images.unsplash.com/photo-1554284126-aa88f22d8b74?auto=format&fit=crop&w=1600&q=80" />
-      <div className="w-full max-w-4xl bg-white/50 backdrop-blur-2xl rounded-[2.5rem] shadow-2xl border border-rose-200 flex flex-col items-center overflow-hidden transition-transform duration-300 hover:scale-[1.01] hover:shadow-3xl">
-        {/* Icono de mancuernas */}
-        <div className="flex justify-center items-center mt-12 mb-4">
-          <span className="bg-rose-100 text-rose-600 rounded-full p-5 shadow-lg animate-bounce-slow">
-            {/* Ícono de mancuernas SVG */}
-            <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
-              <rect x="2" y="9" width="3" height="6" rx="1" fill="currentColor" />
-              <rect x="19" y="9" width="3" height="6" rx="1" fill="currentColor" />
-              <rect x="7" y="11" width="10" height="2" rx="1" fill="currentColor" />
-              <rect x="5" y="7" width="2" height="10" rx="1" fill="currentColor" />
-              <rect x="17" y="7" width="2" height="10" rx="1" fill="currentColor" />
-            </svg>
-          </span>
-        </div>
-        {/* Contenido principal */}
-        <div className="flex flex-col items-center px-10 py-10 w-full">
-          <span className="uppercase tracking-widest text-xs text-rose-600 font-bold mb-6 animate-fade-in">
-            FitApp
-          </span>
-          <h1 className="text-5xl md:text-6xl font-black mb-6 text-gray-900 text-center tracking-tight drop-shadow-lg font-sans bg-gradient-to-r from-rose-500 via-red-500 to-rose-700 bg-clip-text text-transparent animate-gradient-move">
-            Tu progreso,{" "}
-            <span className="text-rose-700">tu mejor versión</span>
-          </h1>
-          <h2 className="text-2xl md:text-3xl font-semibold mb-12 text-rose-700 text-center relative animate-fade-in-slow">
-            <span className="relative z-10">
-              Registra tus entrenamientos, controla tu avance y alcanza tus
-              objetivos fitness.
+    <>
+      <BackgroundByRoute />
+      <motion.main
+        initial={{ opacity: 0, y: 32 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -32 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-screen w-full py-8 md:py-12 px-2 md:px-6 overflow-auto"
+      >
+        <div className="mx-auto w-full max-w-[820px] bg-white/80 backdrop-blur-2xl rounded-2xl shadow-2xl border border-rose-200 p-4 md:p-8 flex flex-col gap-6">
+          {/* Icono de mancuernas */}
+          <div className="flex justify-center items-center mt-12 mb-4">
+            <span className="bg-rose-100 text-rose-600 rounded-full p-5 shadow-lg animate-bounce-slow">
+              {/* Ícono de mancuernas SVG */}
+              <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
+                <rect
+                  x="2"
+                  y="9"
+                  width="3"
+                  height="6"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="19"
+                  y="9"
+                  width="3"
+                  height="6"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="7"
+                  y="11"
+                  width="10"
+                  height="2"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="5"
+                  y="7"
+                  width="2"
+                  height="10"
+                  rx="1"
+                  fill="currentColor"
+                />
+                <rect
+                  x="17"
+                  y="7"
+                  width="2"
+                  height="10"
+                  rx="1"
+                  fill="currentColor"
+                />
+              </svg>
             </span>
-            <span
-              className="absolute left-1/2 -bottom-2 w-2/3 h-1 bg-gradient-to-r from-rose-400 via-red-400 to-rose-600 rounded-full opacity-70 animate-underline-slide"
-              style={{ transform: "translateX(-50%)" }}
-            />
-          </h2>
-          <div className="mb-14 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-2xl">
-            {/* Rutinas personalizadas */}
-            <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
-              <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
-                {/* Icono calendario */}
-                <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
-                  <rect
-                    x="3"
-                    y="5"
-                    width="18"
-                    height="16"
-                    rx="3"
-                    fill="currentColor"
-                    opacity="0.15"
-                  />
-                  <rect
-                    x="3"
-                    y="5"
-                    width="18"
-                    height="16"
-                    rx="3"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                  <path
-                    d="M16 3v4M8 3v4M3 9h18"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                  />
-                </svg>
-              </span>
-              <span className="text-center font-semibold text-gray-800">
-                Rutinas personalizadas y seguimiento digital
-              </span>
-            </div>
-            {/* Progreso y métricas */}
-            <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
-              <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
-                {/* Icono gráfico de barras */}
-                <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
-                  <rect
-                    x="4"
-                    y="13"
-                    width="3"
-                    height="7"
-                    rx="1.5"
-                    fill="currentColor"
-                    opacity="0.15"
-                  />
-                  <rect
-                    x="10.5"
-                    y="9"
-                    width="3"
-                    height="11"
-                    rx="1.5"
-                    fill="currentColor"
-                    opacity="0.15"
-                  />
-                  <rect
-                    x="17"
-                    y="5"
-                    width="3"
-                    height="15"
-                    rx="1.5"
-                    fill="currentColor"
-                    opacity="0.15"
-                  />
-                  <rect
-                    x="4"
-                    y="13"
-                    width="3"
-                    height="7"
-                    rx="1.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                  <rect
-                    x="10.5"
-                    y="9"
-                    width="3"
-                    height="11"
-                    rx="1.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                  <rect
-                    x="17"
-                    y="5"
-                    width="3"
-                    height="15"
-                    rx="1.5"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  />
-                </svg>
-              </span>
-              <span className="text-center font-semibold text-gray-800">
-                Progreso y métricas en tiempo real
-              </span>
-            </div>
-            {/* Comunidad y motivación */}
-            <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
-              <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
-                {/* Icono comunidad */}
-                <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
-                  <circle
-                    cx="12"
-                    cy="8"
-                    r="4"
-                    fill="currentColor"
-                    opacity="0.15"
-                  />
-                  <circle cx="12" cy="8" r="4" stroke="currentColor" strokeWidth="2" />
-                  <path d="M4 21v-2a4 4 0 014-4h8a4 4 0 014 4v2" stroke="currentColor" strokeWidth="2" />
-                </svg>
-              </span>
-              <span className="text-center font-semibold text-gray-800">
-                Comunidad, motivación y soporte profesional
-              </span>
-            </div>
           </div>
-          <Link
-            href="/register"
-            className="w-full block text-center px-10 py-5 bg-gradient-to-r from-rose-500 to-red-700 text-white rounded-2xl font-extrabold shadow-xl hover:from-rose-600 hover:to-red-800 transition-all duration-200 hover:scale-105 text-2xl tracking-wide mb-8"
-          >
-            ¡Empieza ahora!
-          </Link>
-          <nav className="mt-2 flex justify-center gap-10 text-lg font-semibold opacity-90">
+          {/* Contenido principal */}
+          <div className="flex flex-col items-center px-10 py-10 w-full">
+            <span className="uppercase tracking-widest text-xs text-rose-600 font-bold mb-6 animate-fade-in">
+              FitApp
+            </span>
+            <h1 className="text-5xl md:text-6xl font-black mb-6 text-gray-900 text-center tracking-tight drop-shadow-lg font-sans bg-gradient-to-r from-rose-500 via-red-500 to-rose-700 bg-clip-text text-transparent animate-gradient-move">
+              Tu progreso,{" "}
+              <span className="text-rose-700">tu mejor versión</span>
+            </h1>
+            <h2 className="text-2xl md:text-3xl font-semibold mb-12 text-rose-700 text-center relative animate-fade-in-slow">
+              <span className="relative z-10">
+                Registra tus entrenamientos, controla tu avance y alcanza tus
+                objetivos fitness.
+              </span>
+              <span
+                className="absolute left-1/2 -bottom-2 w-2/3 h-1 bg-gradient-to-r from-rose-400 via-red-400 to-rose-600 rounded-full opacity-70 animate-underline-slide"
+                style={{ transform: "translateX(-50%)" }}
+              />
+            </h2>
+            <div className="mb-14 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-2xl">
+              {/* Rutinas personalizadas */}
+              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+                <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
+                  {/* Icono calendario */}
+                  <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                    <rect
+                      x="3"
+                      y="5"
+                      width="18"
+                      height="16"
+                      rx="3"
+                      fill="currentColor"
+                      opacity="0.15"
+                    />
+                    <rect
+                      x="3"
+                      y="5"
+                      width="18"
+                      height="16"
+                      rx="3"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M16 3v4M8 3v4M3 9h18"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                </span>
+                <span className="text-center font-semibold text-gray-800">
+                  Rutinas personalizadas y seguimiento digital
+                </span>
+              </div>
+              {/* Progreso y métricas */}
+              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+                <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
+                  {/* Icono gráfico de barras */}
+                  <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                    <rect
+                      x="4"
+                      y="13"
+                      width="3"
+                      height="7"
+                      rx="1.5"
+                      fill="currentColor"
+                      opacity="0.15"
+                    />
+                    <rect
+                      x="10.5"
+                      y="9"
+                      width="3"
+                      height="11"
+                      rx="1.5"
+                      fill="currentColor"
+                      opacity="0.15"
+                    />
+                    <rect
+                      x="17"
+                      y="5"
+                      width="3"
+                      height="15"
+                      rx="1.5"
+                      fill="currentColor"
+                      opacity="0.15"
+                    />
+                    <rect
+                      x="4"
+                      y="13"
+                      width="3"
+                      height="7"
+                      rx="1.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <rect
+                      x="10.5"
+                      y="9"
+                      width="3"
+                      height="11"
+                      rx="1.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <rect
+                      x="17"
+                      y="5"
+                      width="3"
+                      height="15"
+                      rx="1.5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                </span>
+                <span className="text-center font-semibold text-gray-800">
+                  Progreso y métricas en tiempo real
+                </span>
+              </div>
+              {/* Comunidad y motivación */}
+              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+                <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
+                  {/* Icono comunidad */}
+                  <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="4"
+                      fill="currentColor"
+                      opacity="0.15"
+                    />
+                    <circle
+                      cx="12"
+                      cy="8"
+                      r="4"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                    <path
+                      d="M4 21v-2a4 4 0 014-4h8a4 4 0 014 4v2"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    />
+                  </svg>
+                </span>
+                <span className="text-center font-semibold text-gray-800">
+                  Comunidad, motivación y soporte profesional
+                </span>
+              </div>
+            </div>
             <Link
-              href="/login"
-              className="text-rose-700 hover:underline transition"
+              href="/register"
+              className="w-full block text-center px-10 py-5 bg-gradient-to-r from-rose-500 to-red-700 text-white rounded-2xl font-extrabold shadow-xl hover:from-rose-600 hover:to-red-800 transition-all duration-200 hover:scale-105 text-2xl tracking-wide mb-8"
             >
-              Iniciar sesión
+              ¡Empieza ahora!
             </Link>
-            <Link
-              href="/workout"
-              className="text-gray-700 hover:text-rose-700 transition"
-            >
-              Workout
-            </Link>
-            <Link
-              href="/progress"
-              className="text-gray-700 hover:text-rose-700 transition"
-            >
-              Progreso
-            </Link>
-          </nav>
+            <nav className="mt-2 flex justify-center gap-10 text-lg font-semibold opacity-90">
+              <Link
+                href="/login"
+                className="text-rose-700 hover:underline transition"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/workout"
+                className="text-gray-700 hover:text-rose-700 transition"
+              >
+                Workout
+              </Link>
+              <Link
+                href="/progress"
+                className="text-gray-700 hover:text-rose-700 transition"
+              >
+                Progreso
+              </Link>
+            </nav>
+          </div>
         </div>
-      </div>
-      {/* Animaciones personalizadas — movidas a styles/global.css */}
-    </main>
+        {/* Animaciones personalizadas — movidas a styles/global.css */}
+      </motion.main>
+    </>
   );
 }

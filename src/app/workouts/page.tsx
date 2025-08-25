@@ -1,17 +1,13 @@
 "use client";
 import Image from "next/image";
 import { WorkoutForm } from "../../components/forms/WorkoutForm";
+import { BackgroundByRoute } from "@/components/layout/BackgroundByRoute";
 
 export default function WorkoutsPage() {
   return (
     <main className="relative min-h-screen flex items-start justify-center pt-16 pb-24">
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="https://images.unsplash.com/photo-1579758629938-03607ccdbaba?auto=format&fit=crop&w=1200&q=80"
-          alt="Workouts"
-          fill
-          className="object-cover opacity-30"
-        />
+       <BackgroundByRoute/>
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/70 via-indigo-800/60 to-blue-700/70" />
       </div>
 
