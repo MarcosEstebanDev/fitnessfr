@@ -12,12 +12,12 @@ export default function Home() {
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -32 }}
         transition={{ duration: 0.5 }}
-        className="min-h-screen w-full py-8 md:py-12 px-2 md:px-6 overflow-auto"
+        className="min-h-screen w-full flex items-center justify-center px-2 md:px-6 overflow-auto"
       >
-        <div className="mx-auto w-full max-w-[820px] bg-white/80 backdrop-blur-2xl rounded-2xl shadow-2xl border border-rose-200 p-4 md:p-8 flex flex-col gap-6">
+        <div className="mx-auto w-full max-w-[400px] md:max-w-[500px] lg:max-w-[550px] bg-white/80 backdrop-blur-2xl rounded-2xl shadow-2xl border border-rose-200 p-3 md:p-4 flex flex-col gap-4 my-2">
           {/* Icono de mancuernas */}
-          <div className="flex justify-center items-center mt-12 mb-4">
-            <span className="bg-rose-100 text-rose-600 rounded-full p-5 shadow-lg animate-bounce-slow">
+          <div className="flex justify-center items-center mt-4 mb-1">
+            <span className="bg-rose-100 text-rose-600 rounded-full p-4 shadow-lg animate-bounce-slow">
               {/* Ícono de mancuernas SVG */}
               <svg width="48" height="48" fill="none" viewBox="0 0 24 24">
                 <rect
@@ -64,15 +64,15 @@ export default function Home() {
             </span>
           </div>
           {/* Contenido principal */}
-          <div className="flex flex-col items-center px-10 py-10 w-full">
-            <span className="uppercase tracking-widest text-xs text-rose-600 font-bold mb-6 animate-fade-in">
+          <div className="flex flex-col items-center px-2 py-4 w-full">
+            <span className="uppercase tracking-widest text-xs text-rose-600 font-bold mb-3 animate-fade-in">
               FitApp
             </span>
-            <h1 className="text-5xl md:text-6xl font-black mb-6 text-gray-900 text-center tracking-tight drop-shadow-lg font-sans bg-gradient-to-r from-rose-500 via-red-500 to-rose-700 bg-clip-text text-transparent animate-gradient-move">
+            <h1 className="text-3xl md:text-4xl font-black mb-4 text-gray-900 text-center tracking-tight drop-shadow-lg font-sans bg-gradient-to-r from-rose-500 via-red-500 to-rose-700 bg-clip-text text-transparent animate-gradient-move">
               Tu progreso,{" "}
               <span className="text-rose-700">tu mejor versión</span>
             </h1>
-            <h2 className="text-2xl md:text-3xl font-semibold mb-12 text-rose-700 text-center relative animate-fade-in-slow">
+            <h2 className="text-lg md:text-xl font-semibold mb-6 text-rose-700 text-center relative animate-fade-in-slow">
               <span className="relative z-10">
                 Registra tus entrenamientos, controla tu avance y alcanza tus
                 objetivos fitness.
@@ -82,10 +82,10 @@ export default function Home() {
                 style={{ transform: "translateX(-50%)" }}
               />
             </h2>
-            <div className="mb-14 grid grid-cols-1 md:grid-cols-3 gap-8 w-full max-w-2xl">
+            <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-xl">
               {/* Rutinas personalizadas */}
-              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
-                <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
+              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-4 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+                <span className="bg-rose-100 text-rose-600 rounded-full p-3 mb-2 shadow-lg group-hover:bg-rose-200 transition">
                   {/* Icono calendario */}
                   <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
                     <rect
@@ -114,13 +114,13 @@ export default function Home() {
                     />
                   </svg>
                 </span>
-                <span className="text-center font-semibold text-gray-800">
+                <span className="text-center font-semibold text-gray-800 text-sm">
                   Rutinas personalizadas y seguimiento digital
                 </span>
               </div>
               {/* Progreso y métricas */}
-              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
-                <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
+              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-4 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+                <span className="bg-rose-100 text-rose-600 rounded-full p-3 mb-2 shadow-lg group-hover:bg-rose-200 transition">
                   {/* Icono gráfico de barras */}
                   <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
                     <rect
@@ -179,13 +179,13 @@ export default function Home() {
                     />
                   </svg>
                 </span>
-                <span className="text-center font-semibold text-gray-800">
+                <span className="text-center font-semibold text-gray-800 text-sm">
                   Progreso y métricas en tiempo real
                 </span>
               </div>
               {/* Comunidad y motivación */}
-              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-7 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
-                <span className="bg-rose-100 text-rose-600 rounded-full p-4 mb-4 shadow-lg group-hover:bg-rose-200 transition">
+              <div className="flex flex-col items-center bg-white/95 border border-rose-100 rounded-2xl p-4 shadow-lg hover:shadow-2xl transition hover:-translate-y-2 hover:bg-rose-50/70 duration-200 group">
+                <span className="bg-rose-100 text-rose-600 rounded-full p-3 mb-2 shadow-lg group-hover:bg-rose-200 transition">
                   {/* Icono comunidad */}
                   <svg width="32" height="32" fill="none" viewBox="0 0 24 24">
                     <circle
@@ -209,18 +209,18 @@ export default function Home() {
                     />
                   </svg>
                 </span>
-                <span className="text-center font-semibold text-gray-800">
+                <span className="text-center font-semibold text-gray-800 text-sm">
                   Comunidad, motivación y soporte profesional
                 </span>
               </div>
             </div>
             <Link
               href="/register"
-              className="w-full block text-center px-10 py-5 bg-gradient-to-r from-rose-500 to-red-700 text-white rounded-2xl font-extrabold shadow-xl hover:from-rose-600 hover:to-red-800 transition-all duration-200 hover:scale-105 text-2xl tracking-wide mb-8"
+              className="w-full block text-center px-6 py-3 bg-gradient-to-r from-rose-500 to-red-700 text-white rounded-2xl font-extrabold shadow-xl hover:from-rose-600 hover:to-red-800 transition-all duration-200 hover:scale-105 text-lg tracking-wide mb-4"
             >
               ¡Empieza ahora!
             </Link>
-            <nav className="mt-2 flex justify-center gap-10 text-lg font-semibold opacity-90">
+            <nav className="mt-2 flex justify-center gap-6 text-base font-semibold opacity-90">
               <Link
                 href="/login"
                 className="text-rose-700 hover:underline transition"

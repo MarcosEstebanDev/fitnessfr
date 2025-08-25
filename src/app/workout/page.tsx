@@ -76,10 +76,27 @@ export default function Workout() {
                 <Calendar
                   date={selectedDate}
                   onChange={(d: Date) => setSelectedDate(d)}
-                  color="#e11d48" // rose-600
+                  color="#e11d48"
                   showMonthAndYearPickers
                   weekdayDisplayFormat="EE"
                 />
+                {/* Navegación de rango */}
+                <div className="flex justify-center gap-2 mt-4">
+                  {[
+                    { label: "1 semana", value: 7 },
+                    { label: "3 meses", value: 90 },
+                    { label: "6 meses", value: 180 },
+                    { label: "1 año", value: 365 },
+                  ].map((r) => (
+                    <button
+                      key={r.label}
+                      onClick={() => setSelectedDate(new Date(Date.now() - r.value * 24 * 60 * 60 * 1000))}
+                      className="px-3 py-1.5 bg-rose-100 text-rose-700 rounded-xl font-semibold shadow hover:bg-rose-200 transition"
+                    >
+                      {r.label}
+                    </button>
+                  ))}
+                </div>
               </div>
               <div className="px-4 py-3 bg-rose-50/70 border-t border-rose-100">
                 <span className="text-rose-700 font-semibold">

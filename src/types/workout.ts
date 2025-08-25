@@ -13,4 +13,4 @@ export type WorkoutRecord = {
   routines: RoutineItem[];
   attachments?: { name: string }[];
   createdAt: string; // ISO
-};
+  };

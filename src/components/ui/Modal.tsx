@@ -7,7 +7,7 @@ import { createPortal } from "react-dom";
 type Props = {
   open: boolean;
   onClose: () => void;
-  title?: string;
+  title?: ReactNode; // <-- CAMBIO: acepta JSX además de string
   children: ReactNode;
   size?: "sm" | "md" | "lg" | "xl";
   closeOnBackdrop?: boolean;

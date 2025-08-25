@@ -5,7 +5,8 @@ import { Button } from "../ui/Button";
 import type { Workout, Exercise } from "../../interfaces/workout";
 
 interface Props {
-  onSubmit?: (data: Workout) => void;
+  onSubmit?: (data: any) => void;
+
 }
 
 export const WorkoutForm = ({ onSubmit }: Props) => {
@@ -26,7 +27,7 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
   const addExercise = () => {
     if (!exercise.name) return;
     setWorkout(w => ({ ...w, exercises: [...w.exercises, exercise] }));
-    setExercise({ name: "", sets: 3, reps: 10, weight: undefined, notes: "" });
+    setExercise({ name: "", sets: 3, reps: 10, weight: undefined });
   };
 
   const submit = (e: React.FormEvent) => {
@@ -37,7 +38,7 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
     }
     setError("");
     onSubmit?.(workout);
-    alert("Workout guardado (demo).");
+    // alert("Workout guardado (demo)."); // Quitar para producción
   };
 
   return (
@@ -46,7 +47,7 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
       <div className="grid grid-cols-2 gap-4">
         <Input
           label="Fecha"
-            type="date"
+          type="date"
           value={workout.date}
           onChange={e => setWorkout(w => ({ ...w, date: e.target.value }))}
         />
@@ -64,8 +65,15 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
         placeholder="Sensaciones generales"
       />
 
-      <div className="p-4 rounded-xl border border-indigo-200 bg-white/40 space-y-3">
-        <p className="text-sm font-semibold text-indigo-700">Agregar ejercicio</p>
+      <div className="p-4 rounded-xl border border-rose-200 bg-rose-50/40 space-y-3 shadow">
+        <p className="text-sm font-semibold text-rose-700 flex items-center gap-2">
+          <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
+            <rect x="3" y="5" width="18" height="16" rx="3" fill="currentColor" opacity="0.15" />
+            <rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" strokeWidth="2" />
+            <path d="M16 3v4M8 3v4M3 9h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+          </svg>
+          Agregar ejercicio
+        </p>
         <div className="grid gap-3 md:grid-cols-5">
           <Input
             className="md:col-span-2"
@@ -79,7 +87,7 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
             value={exercise.sets}
             onChange={e => setExercise(ex => ({ ...ex, sets: Number(e.target.value) }))}
           />
-            <Input
+          <Input
             type="number"
             placeholder="Reps"
             value={exercise.reps}
@@ -92,7 +100,11 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
             onChange={e => setExercise(ex => ({ ...ex, weight: e.target.value ? Number(e.target.value) : undefined }))}
           />
         </div>
-        <Button type="button" onClick={addExercise}>
+        <Button type="button" onClick={addExercise} className="flex items-center gap-2 bg-rose-500 text-white hover:bg-rose-700 transition">
+          <svg width="16" height="16" fill="none" viewBox="0 0 24 24">
+            <rect x="10" y="4" width="4" height="16" rx="2" fill="currentColor" />
+            <rect x="4" y="10" width="16" height="4" rx="2" fill="currentColor" />
+          </svg>
           Añadir ejercicio
         </Button>
 
@@ -101,7 +113,7 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
             {workout.exercises.map((ex, i) => (
               <li
                 key={i}
-                className="flex justify-between items-center px-3 py-2 rounded-lg bg-indigo-50 text-indigo-800"
+                className="flex justify-between items-center px-3 py-2 rounded-lg bg-rose-100 text-rose-800 shadow-sm"
               >
                 <span>
                   {ex.name} - {ex.sets}x{ex.reps}
@@ -125,7 +137,9 @@ export const WorkoutForm = ({ onSubmit }: Props) => {
         )}
       </div>
 
-      <Button type="submit">Guardar workout</Button>
+      <Button type="submit" className="w-full bg-gradient-to-r from-rose-500 to-red-700 text-white font-bold shadow-lg hover:from-rose-600 hover:to-red-800 transition-all duration-200 hover:scale-105">
+        Guardar workout
+      </Button>
     </form>
   );
 };

@@ -6,7 +6,7 @@ type Props = {
   initial?: Partial<WorkoutRecord>;
   onSave: (input: Omit<WorkoutRecord, "id" | "createdAt">) => void;
   onCancel: () => void;
-  bare?: boolean; // nuevo: sin tarjeta contenedora ni header (para modal)
+  bare?: boolean; // sin tarjeta contenedora ni header (para modal)
 };
 
 export default function WorkoutForm({ initial, onSave, onCancel, bare = false }: Props) {
@@ -42,7 +42,7 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Pecho y tríceps"
-            className="px-3 py-2 rounded-lg border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white/80"
+            className="px-3 py-2 rounded-lg border border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white/80"
           />
         </label>
         <label className="flex flex-col gap-1">
@@ -52,7 +52,7 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
             multiple
             accept="image/*,video/*"
             onChange={(e) => setAttachments(Array.from(e.target.files || []).map((f) => ({ name: f.name })))}
-            className="px-3 py-2 rounded-lg border border-indigo-200 bg-white/80"
+            className="px-3 py-2 rounded-lg border border-rose-200 bg-white/80"
           />
         </label>
       </div>
@@ -64,27 +64,27 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
           onChange={(e) => setNotes(e.target.value)}
           rows={3}
           placeholder="Sensaciones, RPE, recordatorios…"
-          className="px-3 py-2 rounded-lg border border-indigo-200 focus:outline-none focus:ring-2 focus:ring-indigo-400 bg-white/80"
+          className="px-3 py-2 rounded-lg border border-rose-200 focus:outline-none focus:ring-2 focus:ring-rose-400 bg-white/80"
         />
       </label>
 
       <div className="mt-5">
         <div className="flex items-center justify-between mb-2">
-          <h4 className="text-md font-bold text-indigo-700">Rutina</h4>
-          <button onClick={addRoutine} className="px-3 py-2 text-sm bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+          <h4 className="text-md font-bold text-rose-700">Rutina</h4>
+          <button onClick={addRoutine} className="px-3 py-2 text-sm bg-rose-600 text-white rounded-lg hover:bg-rose-700">
             Añadir ejercicio
           </button>
         </div>
 
         <div className="flex flex-col gap-3">
           {routines.map((r, idx) => (
-            <div key={r.id} className="grid grid-cols-12 gap-2 bg-indigo-50/60 border border-indigo-200 rounded-xl p-3">
+            <div key={r.id} className="grid grid-cols-12 gap-2 bg-rose-50/60 border border-rose-200 rounded-xl p-3">
               <div className="col-span-12 md:col-span-4">
                 <input
                   value={r.name}
                   onChange={(e) => updateRoutine(r.id, "name", e.target.value)}
                   placeholder={`Ejercicio ${idx + 1} (p.ej., Press banca)`}
-                  className="w-full px-3 py-2 rounded-lg border border-indigo-200 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-rose-200 bg-white"
                 />
               </div>
               <div className="col-span-4 md:col-span-2">
@@ -93,7 +93,7 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
                   min={1}
                   value={r.sets}
                   onChange={(e) => updateRoutine(r.id, "sets", Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg border border-indigo-200 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-rose-200 bg-white"
                   placeholder="Series"
                 />
               </div>
@@ -103,7 +103,7 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
                   min={1}
                   value={r.reps}
                   onChange={(e) => updateRoutine(r.id, "reps", Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg border border-indigo-200 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-rose-200 bg-white"
                   placeholder="Reps"
                 />
               </div>
@@ -114,7 +114,7 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
                   step="0.5"
                   value={r.weight}
                   onChange={(e) => updateRoutine(r.id, "weight", Number(e.target.value))}
-                  className="w-full px-3 py-2 rounded-lg border border-indigo-200 bg-white"
+                  className="w-full px-3 py-2 rounded-lg border border-rose-200 bg-white"
                   placeholder="Peso (kg)"
                 />
               </div>
@@ -133,10 +133,18 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
       </div>
 
       <div className="mt-5 flex gap-3">
-        <button onClick={handleSave} className="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="px-5 py-2.5 bg-rose-600 text-white rounded-xl font-bold hover:bg-rose-700"
+        >
           Guardar
         </button>
-        <button onClick={onCancel} className="px-5 py-2.5 bg-indigo-100 text-indigo-700 rounded-xl font-bold hover:bg-indigo-200">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-5 py-2.5 bg-rose-100 text-rose-700 rounded-xl font-bold hover:bg-rose-200"
+        >
           Cancelar
         </button>
       </div>
@@ -146,10 +154,10 @@ export default function WorkoutForm({ initial, onSave, onCancel, bare = false }:
   if (bare) return Content;
 
   return (
-    <div className="bg-white/95 border border-indigo-100 rounded-2xl shadow p-5 mb-4 overflow-auto">
+    <div className="bg-white/95 border border-rose-100 rounded-2xl shadow p-5 mb-4 overflow-auto">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-bold text-indigo-700">Nuevo entrenamiento</h3>
-        <button onClick={onCancel} className="px-3 py-1.5 text-indigo-700 hover:text-indigo-900 font-semibold">
+        <h3 className="text-lg font-bold text-rose-700">Nuevo entrenamiento</h3>
+        <button onClick={onCancel} className="px-3 py-1.5 text-rose-700 hover:text-rose-900 font-semibold">
           Cerrar
         </button>
       </div>
