@@ -1,48 +1,125 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const links = [
-	{ href: "/", label: "Home" },
-	{ href: "/workout", label: "Workout" },
-	{ href: "/progress", label: "Progreso" },
-	{ href: "/login", label: "Iniciar sesión" },
-	{ href: "/register", label: "Registrarse" },
-];
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { getSession, clearSession, type FitnessSession } from "@/lib/session";
 
 export default function NavBar() {
-	const pathname = usePathname();
+	const router = useRouter();
+	const [session, setSessionState] = useState<FitnessSession | null>(() => getSession());
+	const [open, setOpen] = useState(false);
 
+	useEffect(() => {
+		const onChange = () => setSessionState(getSession());
+		window.addEventListener("fitnessfr_session_changed", onChange);
+		window.addEventListener("storage", onChange);
+		return () => {
+			window.removeEventListener("fitnessfr_session_changed", onChange);
+			window.removeEventListener("storage", onChange);
+		};
+	}, []);
+
+	function initials() {
+		if (!session) return "";
+		const { firstName, lastName, email } = session.user;
+		if (firstName || lastName) {
+			return `${(firstName || "").charAt(0)}${(lastName || "").charAt(0)}`.toUpperCase();
+		}
+		return (email || "").charAt(0).toUpperCase();
+	}
+
+	function displayName() {
+		if (!session) return "";
+		const { firstName, lastName, email } = session.user;
+		return firstName ? `${firstName}${lastName ? " " + lastName : ""}` : email;
+	}
+
+	function handleSignOut() {
+		clearSession();
+		setOpen(false);
+		router.replace("/");
+	}
+
+	// Nota: moví el comentario fuera del JSX para evitar errores de sintaxis
+	// mover menú un poco más a la derecha para que no tape el contenido
 	return (
-		<header className="sticky top-0 z-40 backdrop-blur-xl bg-white/60 border-b border-rose-200 h-16">
-			<nav className="mx-auto w-[min(1260px,95vw)] h-full flex items-center justify-between px-4">
-				<Link
-					href="/"
-					className="font-extrabold text-lg bg-gradient-to-r from-rose-500 via-red-500 to-rose-700 bg-clip-text text-transparent"
-				>
-					FitApp
+		<nav className="w-full border-b border-rose-100 bg-white/60 backdrop-blur-sm">
+			{/* contenedor relativo para poder posicionar el grupo de enlaces fuera del flujo */}
+			<div className="max-w-6xl mx-auto px-6 py-3 flex items-center relative">
+				<Link href="/" className="text-lg font-bold text-rose-700">
+					FitnessFR
 				</Link>
-				<ul className="flex items-center gap-4">
-					{links.map((l) => {
-						const active = pathname === l.href;
-						return (
-							<li key={l.href}>
-								<Link
-									href={l.href}
-									className={[
-										"px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors",
-										active
-											? "text-rose-700 bg-rose-50 border border-rose-200"
-											: "text-gray-700 hover:text-rose-700 hover:bg-rose-50",
-									].join(" ")}
+
+				{/* posiciono el bloque de navegación mucho más a la derecha */}
+				<div className="absolute right-0 transform translate-x-48 md:translate-x-72 lg:translate-x-96 flex items-center gap-4 z-50">
+					{!session ? (
+						<>
+							<Link href="/login" className="text-sm font-medium text-gray-700 hover:text-rose-700">
+								Iniciar
+							</Link>
+							<Link
+								href="/register"
+								className="text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-red-700 px-3 py-1.5 rounded-lg shadow-sm hover:opacity-95"
+							>
+								Registro
+							</Link>
+						</>
+					) : (
+						<>
+							<Link href="/workout" className="text-sm font-medium text-gray-700 hover:text-rose-700">
+								Workout
+							</Link>
+							<Link href="/progress" className="text-sm font-medium text-gray-700 hover:text-rose-700">
+								Progress
+							</Link>
+
+							<div className="relative">
+								<button
+									onClick={() => setOpen((s) => !s)}
+									aria-label="Abrir menú de usuario"
+									className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-rose-100 shadow-sm"
 								>
-									{l.label}
-								</Link>
-							</li>
-						);
-					})}
-				</ul>
-			</nav>
-		</header>
+									<span className="h-8 w-8 rounded-full bg-rose-600 text-white font-semibold flex items-center justify-center">
+										{initials()}
+									</span>
+									<span className="hidden sm:inline text-sm font-medium text-gray-800">
+										{displayName()}
+									</span>
+								</button>
+
+								{open && (
+									<div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-rose-100 overflow-hidden z-50 transform translate-x-4 sm:translate-x-8 origin-top-right">
+										<div className="px-4 py-2 text-sm text-gray-700 border-b border-rose-100">
+											<div className="font-medium">{displayName()}</div>
+											<div className="text-xs text-gray-500 mt-0.5">
+												{session.user.email}
+											</div>
+										</div>
+										<Link
+											href="/workout"
+											className="block px-4 py-2 text-sm text-gray-700 hover:bg-rose-50"
+										>
+											Mis workouts
+										</Link>
+										<Link
+											href="/profile"
+											className="block px-4 py-2 text-sm text-gray-700 hover:bg-rose-50"
+										>
+											Perfil
+										</Link>
+										<button
+											onClick={handleSignOut}
+											className="w-full text-left px-4 py-2 text-sm text-rose-700 hover:bg-rose-50"
+										>
+											Cerrar sesión
+										</button>
+									</div>
+								)}
+							</div>
+						</>
+					)}
+				</div>
+			</div>
+		</nav>
 	);
 }

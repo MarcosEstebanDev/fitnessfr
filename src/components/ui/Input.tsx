@@ -1,21 +1,19 @@
+"use client";
 import React from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label?: string;
-  error?: string;
-}
+type Props = React.InputHTMLAttributes<HTMLInputElement> & { className?: string };
 
-export const Input: React.FC<InputProps> = ({ label, error, className = "", ...props }) => (
-  <div className="space-y-1">
-    {label && (
-      <label className="block text-sm font-medium text-indigo-800">
-        {label}
-      </label>
-    )}
-    <input
-      className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-blue-50/50 transition placeholder:text-gray-400 ${error ? "border-red-400" : ""} ${className}`}
-      {...props}
-    />
-    {error && <p className="text-xs text-red-500">{error}</p>}
-  </div>
-);
+const Input = React.forwardRef<HTMLInputElement, Props>(({ className = "", ...rest }, ref) => (
+  <input
+    ref={ref}
+    {...rest}
+    className={
+      `block w-full rounded-lg border border-rose-200 bg-white/80 px-3 py-2 text-sm placeholder:text-rose-400 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:border-rose-500 shadow-sm ` +
+      className
+    }
+  />
+));
+Input.displayName = "Input";
+
+export { Input };
+export default Input;

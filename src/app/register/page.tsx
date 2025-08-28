@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { BackgroundByRoute } from "@/components/layout/BackgroundByRoute";
+import { setSession } from "@/lib/session";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -33,12 +34,23 @@ export default function RegisterPage() {
 
     setLoading(true);
     try {
-      // TODO: reemplazar por tu llamada real al backend (fetch/axios)
-      const data = Object.fromEntries(new FormData(form));
-      console.log("register payload", data);
+      const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+      const { firstName = "", lastName = "", email = "" } = data;
+
       await new Promise((r) => setTimeout(r, 900));
-      // TODO: guardar token/usuario si aplica
-      router.replace("/"); // Cambiar a "/workout" si quieres
+
+      const session = {
+        id: typeof crypto !== "undefined" && (crypto as any).randomUUID ? (crypto as any).randomUUID() : `id_${Date.now()}`,
+        token: btoa(`${email}:${Date.now()}`),
+        user: { firstName, lastName, email },
+        workouts: [] as unknown[],
+        createdAt: new Date().toISOString(),
+      };
+
+      // usa setSession para guardar y sincronizar
+      setSession(session);
+
+      router.replace("/workout");
     } catch (err) {
       console.error(err);
     } finally {

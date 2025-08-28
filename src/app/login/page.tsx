@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import HeroBackground from "../../components/HeroBackground";
 import { BackgroundByRoute } from "@/components/layout/BackgroundByRoute";
+import { setSession } from "@/lib/session";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,14 +21,24 @@ export default function LoginPage() {
 
     setLoading(true);
     try {
-      // ...existing code...
-      // TODO: reemplazar por tu llamada real al backend (fetch/axios)
+      const data = Object.fromEntries(new FormData(form)) as Record<string, string>;
+      const { email = "" } = data;
+
       await new Promise((r) => setTimeout(r, 800));
-      // TODO: guardar token/usuario si aplica
-      router.replace("/"); // Cambiar a "/workout" si quieres
-      // ...existing code...
+
+      const session = {
+        id: typeof crypto !== "undefined" && (crypto as any).randomUUID ? (crypto as any).randomUUID() : `id_${Date.now()}`,
+        token: btoa(`${email}:${Date.now()}`),
+        user: { email },
+        workouts: [] as unknown[],
+        createdAt: new Date().toISOString(),
+      };
+
+      // usa setSession para guardar y disparar el evento de actualización
+      setSession(session);
+
+      router.replace("/workout");
     } catch (err) {
-      // Aquí podrías mostrar un mensaje de error de servidor
       console.error(err);
     } finally {
       setLoading(false);

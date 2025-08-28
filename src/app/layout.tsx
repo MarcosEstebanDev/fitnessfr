@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "../context/AuthContext";
 import { BackgroundByRoute } from "../components/layout/BackgroundByRoute";
 import "../styles/global.css";
-import NavBar from "../components/NavBar";
+import NavBar from "@/components/NavBar";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es">
-      <body className="h-dvh overflow-hidden flex flex-col">
+      <body>
         <NavBar />
         <div className="flex-1 min-h-0">{children}</div>
       </body>

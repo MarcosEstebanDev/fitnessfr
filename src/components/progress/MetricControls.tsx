@@ -30,8 +30,8 @@ export const MetricControls = ({ metrics, selected, onChange, meta, onMetaChange
             onClick={() => onChange(m.key)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition ${
               m.key === selected
-                ? "bg-indigo-600 text-white shadow"
-                : "bg-indigo-100 text-indigo-700 hover:bg-indigo-200"
+                ? "bg-rose-600 text-white shadow"
+                : "bg-rose-100 text-rose-700 hover:bg-rose-200"
             }`}
           >
             {m.label}
@@ -39,7 +39,7 @@ export const MetricControls = ({ metrics, selected, onChange, meta, onMetaChange
         ))}
       </div>
       <div className="flex items-center gap-4">
-        <label className="text-sm font-medium text-indigo-800">Meta:</label>
+        <label className="text-sm font-medium text-rose-800">Meta:</label>
         <Input
           type="number"
             className="w-28"
