@@ -6,7 +6,8 @@ import "react-date-range/dist/theme/default.css";
 import WorkoutCard from "../../components/workout/WorkoutCard";
 import WorkoutCreateModal from "../../components/workout/WorkoutCreateModal";
 import HeroBackground from "../../components/HeroBackground";
-import type { WorkoutRecord } from "../../types/workout";
+import type { WorkoutRecord, RoutineItem } from "../../types/workout";
+import { getMockWorkoutsByDate } from "../../mocks/workouts";
 import { motion } from "framer-motion";
 import { BackgroundByRoute } from "@/components/layout/BackgroundByRoute";
 
@@ -17,14 +18,63 @@ export default function Workout() {
   const [workoutsByDate, setWorkoutsByDate] = useState<Record<string, WorkoutRecord[]>>({});
   const [showForm, setShowForm] = useState(false);
 
-  // Load/Persist
+  // Evitar mismatches SSR/CSR: renderizar partes dependientes del navegador solo después del mount
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Helper: map mocks -> WorkoutRecord shape (agrupa por createdAt local)
+  function mapMockWorkoutsToWorkoutRecords(input: Record<string, any[]>): Record<string, WorkoutRecord[]> {
+    const out: Record<string, WorkoutRecord[]> = {};
+    const all = Object.values(input).flat();
+    for (const m of all) {
+      const created = m.createdAt ? new Date(m.createdAt) : new Date();
+      const k = dateKey(created);
+      const routines: RoutineItem[] = (m.exercises ?? m.routines ?? []).map((ex: any) => ({
+        id: ex.id ?? crypto?.randomUUID?.() ?? String(Math.random()),
+        name: ex.name ?? "",
+        sets: Number(ex.sets ?? 1),
+        reps:
+          typeof ex.reps === "number"
+            ? ex.reps
+            : typeof ex.reps === "string"
+            ? Number(String(ex.reps).split("-")[0]) || 0
+            : 0,
+        weight: ex.weightKg ?? ex.weight ?? 0,
+      }));
+      const rec: WorkoutRecord = {
+        id: m.id ?? crypto?.randomUUID?.() ?? String(Math.random()),
+        title: m.name ?? m.title ?? "Workout",
+        notes: m.notes,
+        routines,
+        attachments: m.attachments,
+        createdAt: m.createdAt ?? created.toISOString(),
+      };
+      if (!out[k]) out[k] = [];
+      out[k].push(rec);
+    }
+    return out;
+  }
+
+  // Load/Persist (usa mocks si no hay nada en localStorage)
   useEffect(() => {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       try {
-        setWorkoutsByDate(JSON.parse(raw));
+        const parsed = JSON.parse(raw);
+        if (Object.keys(parsed).length > 0) {
+          setWorkoutsByDate(parsed);
+          return;
+        }
       } catch {}
     }
+    const mocks = getMockWorkoutsByDate();
+    const mapped = mapMockWorkoutsToWorkoutRecords(mocks);
+    setWorkoutsByDate(mapped);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
+    } catch {}
   }, []);
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(workoutsByDate));
@@ -73,13 +123,15 @@ export default function Workout() {
                 <p className="text-sm text-rose-600/80">Seleccioná un día para ver/registrar</p>
               </div>
               <div className="p-3">
-                <Calendar
-                  date={selectedDate}
-                  onChange={(d: Date) => setSelectedDate(d)}
-                  color="#e11d48"
-                  showMonthAndYearPickers
-                  weekdayDisplayFormat="EE"
-                />
+                {isMounted && (
+                  <Calendar
+                    date={selectedDate}
+                    onChange={(d: Date) => setSelectedDate(d)}
+                    color="#e11d48"
+                    showMonthAndYearPickers
+                    weekdayDisplayFormat="EE"
+                  />
+                )}
                 {/* Navegación de rango */}
                 <div className="flex justify-center gap-2 mt-4">
                   {[
@@ -100,7 +152,8 @@ export default function Workout() {
               </div>
               <div className="px-4 py-3 bg-rose-50/70 border-t border-rose-100">
                 <span className="text-rose-700 font-semibold">
-                  Día seleccionado: <span className="font-bold">{selectedDate.toLocaleDateString()}</span>
+                  Día seleccionado:{" "}
+                  <span className="font-bold">{isMounted ? selectedDate.toLocaleDateString() : "—"}</span>
                 </span>
               </div>
             </div>
@@ -114,7 +167,7 @@ export default function Workout() {
               </h2>
               <div className="flex items-center gap-3">
                 <span className="text-sm md:text-base font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-3 py-1.5 rounded-xl">
-                  {selectedDate.toLocaleDateString()}
+                  {isMounted ? selectedDate.toLocaleDateString() : "—"}
                 </span>
                 <button
                   onClick={() => setShowForm(true)}
@@ -133,7 +186,7 @@ export default function Workout() {
               <h3 className="text-xl font-bold text-gray-900 mb-3">Entrenamientos del día</h3>
               {dayWorkouts.length === 0 ? (
                 <div className="bg-white/95 border border-rose-100 rounded-2xl shadow p-6 text-center">
-                  <p className="text-gray-700">No hay registros para {selectedDate.toLocaleDateString()}.</p>
+                  <p className="text-gray-700">No hay registros para {isMounted ? selectedDate.toLocaleDateString() : "—"}.</p>
                   <button
                     onClick={() => setShowForm(true)}
                     className="mt-4 px-4 py-2 bg-rose-600 text-white rounded-lg hover:bg-rose-700"

@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useEffect, useState, ReactNode, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode, useCallback, useMemo } from "react";
 import { authService } from "../services/auth";
 import type { AuthUser, AuthResponse, LoginForm } from "../interfaces/auth";
 
@@ -21,7 +21,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Rehidratar
+  // Rehidratar (deps con longitud constante)
   useEffect(() => {
     try {
       const t = localStorage.getItem(STORAGE_TOKEN);
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, []); // array de dependencias constante
 
   const login = useCallback(async (credentials: LoginForm) => {
     const res: AuthResponse = await authService.login(credentials);
@@ -52,11 +52,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(STORAGE_USER);
   }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  // Memoizar value para evitar renders innecesarios
+  const value = useMemo(() => ({ user, token, loading, login, logout }), [user, token, loading, login, logout]);
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

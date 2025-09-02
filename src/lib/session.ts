@@ -6,34 +6,37 @@ export type FitnessSession = {
   createdAt: string;
 };
 
-const KEY = "fitnessfr_session";
+// Helpers seguros para leer/escribir/limpiar la sesión en localStorage
+export const SESSION_KEY = "fitnessfr.session";
 
-export function getSession(): FitnessSession | null {
+export function getSession(): unknown | null {
+  if (typeof window === "undefined") return null;
   try {
-    if (typeof window === "undefined") return null;
-    const raw = localStorage.getItem(KEY);
+    const raw = localStorage.getItem(SESSION_KEY);
     if (!raw) return null;
-    return JSON.parse(raw) as FitnessSession;
+    return JSON.parse(raw);
   } catch {
     return null;
   }
 }
 
-export function setSession(session: FitnessSession) {
+export function setSession(payload: unknown): void {
+  if (typeof window === "undefined") return;
   try {
-    localStorage.setItem(KEY, JSON.stringify(session));
-    // storage event won't fire on same tab; you can dispatch a custom event if needed
+    localStorage.setItem(SESSION_KEY, JSON.stringify(payload));
+    // notificar listeners
     window.dispatchEvent(new Event("fitnessfr_session_changed"));
-  } catch (e) {
-    console.warn("No se pudo guardar la sesión en localStorage.", e);
+  } catch {
+    // noop
   }
 }
 
-export function clearSession() {
+export function clearSession(): void {
+  if (typeof window === "undefined") return;
   try {
-    localStorage.removeItem(KEY);
+    localStorage.removeItem(SESSION_KEY);
     window.dispatchEvent(new Event("fitnessfr_session_changed"));
-  } catch (e) {
-    console.warn("No se pudo eliminar la sesión.", e);
+  } catch {
+    // noop
   }
 }

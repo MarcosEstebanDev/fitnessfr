@@ -23,8 +23,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="es">
       <body>
-        <NavBar />
-        <div className="flex-1 min-h-0">{children}</div>
+        <AuthProvider>
+          <NavBar />
+          <div className="flex-1 min-h-0">{children}</div>
+        </AuthProvider>
       </body>
     </html>
   );

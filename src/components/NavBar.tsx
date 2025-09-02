@@ -1,125 +1,168 @@
 "use client";
+
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { getSession, clearSession, type FitnessSession } from "@/lib/session";
+import { useAuth } from "../context/AuthContext";
+import { getSession, clearSession } from "../lib/session";
+import type { FitnessSession } from "../types/FitnessSession";
+
+type AnyUser = Record<string, any> | null;
+
+function normalizeUser(raw: AnyUser) {
+  if (!raw) return null;
+  // If the object already has firstName/lastName use them
+  const id = raw.id ?? raw._id ?? null;
+  const email = raw.email ?? raw.mail ?? null;
+  // possible name fields: name, fullName, displayName
+  const nameField = raw.name ?? raw.fullName ?? raw.displayName ?? null;
+
+  const firstName = raw.firstName ?? raw.firstname ?? (nameField ? String(nameField).split(" ")[0] : undefined);
+  const lastName =
+    raw.lastName ??
+    raw.lastname ??
+    (nameField ? String(nameField).split(" ").slice(1).join(" ") : undefined);
+
+  return {
+    id,
+    email,
+    firstName: firstName ?? undefined,
+    lastName: lastName ?? undefined,
+    name: nameField ?? undefined,
+  };
+}
 
 export default function NavBar() {
-	const router = useRouter();
-	const [session, setSessionState] = useState<FitnessSession | null>(() => getSession());
-	const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const { user } = useAuth();
 
-	useEffect(() => {
-		const onChange = () => setSessionState(getSession());
-		window.addEventListener("fitnessfr_session_changed", onChange);
-		window.addEventListener("storage", onChange);
-		return () => {
-			window.removeEventListener("fitnessfr_session_changed", onChange);
-			window.removeEventListener("storage", onChange);
-		};
-	}, []);
+  const [session, setSessionState] = useState<FitnessSession | null>(null);
+  const [open, setOpen] = useState(false);
 
-	function initials() {
-		if (!session) return "";
-		const { firstName, lastName, email } = session.user;
-		if (firstName || lastName) {
-			return `${(firstName || "").charAt(0)}${(lastName || "").charAt(0)}`.toUpperCase();
-		}
-		return (email || "").charAt(0).toUpperCase();
-	}
+  // Rehidratar solo en cliente
+  useEffect(() => {
+    const s = getSession();
+    setSessionState((s as FitnessSession) ?? null);
+  }, []);
 
-	function displayName() {
-		if (!session) return "";
-		const { firstName, lastName, email } = session.user;
-		return firstName ? `${firstName}${lastName ? " " + lastName : ""}` : email;
-	}
+  useEffect(() => {
+    const onChange = () => {
+      const s = getSession();
+      setSessionState((s as FitnessSession) ?? null);
+    };
+    if (typeof window !== "undefined") {
+      window.addEventListener("fitnessfr_session_changed", onChange);
+      window.addEventListener("storage", onChange);
+    }
+    return () => {
+      if (typeof window !== "undefined") {
+        window.removeEventListener("fitnessfr_session_changed", onChange);
+        window.removeEventListener("storage", onChange);
+      }
+    };
+  }, []);
 
-	function handleSignOut() {
-		clearSession();
-		setOpen(false);
-		router.replace("/");
-	}
+  // Fuente de verdad para el estado autenticado: user (useAuth) o session.user
+  const currentUserRaw = user ?? session?.user ?? null;
+  const currentUser = normalizeUser(currentUserRaw);
 
-	// Nota: moví el comentario fuera del JSX para evitar errores de sintaxis
-	// mover menú un poco más a la derecha para que no tape el contenido
-	return (
-		<nav className="w-full border-b border-rose-100 bg-white/60 backdrop-blur-sm">
-			{/* contenedor relativo para poder posicionar el grupo de enlaces fuera del flujo */}
-			<div className="max-w-6xl mx-auto px-6 py-3 flex items-center relative">
-				<Link href="/" className="text-lg font-bold text-rose-700">
-					FitnessFR
-				</Link>
+  useEffect(() => {
+    if (!currentUser?.id) return;
+    // lógica dependiente del usuario
+  }, [currentUser?.id]);
 
-				{/* posiciono el bloque de navegación mucho más a la derecha */}
-				<div className="absolute right-0 transform translate-x-48 md:translate-x-72 lg:translate-x-96 flex items-center gap-4 z-50">
-					{!session ? (
-						<>
-							<Link href="/login" className="text-sm font-medium text-gray-700 hover:text-rose-700">
-								Iniciar
-							</Link>
-							<Link
-								href="/register"
-								className="text-sm font-semibold text-white bg-gradient-to-r from-rose-500 to-red-700 px-3 py-1.5 rounded-lg shadow-sm hover:opacity-95"
-							>
-								Registro
-							</Link>
-						</>
-					) : (
-						<>
-							<Link href="/workout" className="text-sm font-medium text-gray-700 hover:text-rose-700">
-								Workout
-							</Link>
-							<Link href="/progress" className="text-sm font-medium text-gray-700 hover:text-rose-700">
-								Progress
-							</Link>
+  function initials() {
+    const u = currentUser;
+    if (!u) return "";
+    // Preferir nombre completo si existe
+    if (u.name) {
+      const parts = String(u.name).trim().split(/\s+/);
+      const a = (parts[0] || "").charAt(0);
+      const b = (parts.length > 1 ? parts[parts.length - 1].charAt(0) : "") || "";
+      const res = (a + b).toUpperCase();
+      return res || (u.email || "").charAt(0).toUpperCase();
+    }
+    const first = (u.firstName || "").charAt(0) || "";
+    const last = (u.lastName || "").charAt(0) || "";
+    if (first || last) return (first + last).toUpperCase();
+    return (u.email || "").charAt(0).toUpperCase();
+  }
 
-							<div className="relative">
-								<button
-									onClick={() => setOpen((s) => !s)}
-									aria-label="Abrir menú de usuario"
-									className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 border border-rose-100 shadow-sm"
-								>
-									<span className="h-8 w-8 rounded-full bg-rose-600 text-white font-semibold flex items-center justify-center">
-										{initials()}
-									</span>
-									<span className="hidden sm:inline text-sm font-medium text-gray-800">
-										{displayName()}
-									</span>
-								</button>
+  function displayName() {
+    const u = currentUser;
+    if (!u) return "";
+    if (u.name) return String(u.name);
+    if (u.firstName) return `${u.firstName}${u.lastName ? " " + u.lastName : ""}`;
+    return u.email ?? "";
+  }
 
-								{open && (
-									<div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-rose-100 overflow-hidden z-50 transform translate-x-4 sm:translate-x-8 origin-top-right">
-										<div className="px-4 py-2 text-sm text-gray-700 border-b border-rose-100">
-											<div className="font-medium">{displayName()}</div>
-											<div className="text-xs text-gray-500 mt-0.5">
-												{session.user.email}
-											</div>
-										</div>
-										<Link
-											href="/workout"
-											className="block px-4 py-2 text-sm text-gray-700 hover:bg-rose-50"
-										>
-											Mis workouts
-										</Link>
-										<Link
-											href="/profile"
-											className="block px-4 py-2 text-sm text-gray-700 hover:bg-rose-50"
-										>
-											Perfil
-										</Link>
-										<button
-											onClick={handleSignOut}
-											className="w-full text-left px-4 py-2 text-sm text-rose-700 hover:bg-rose-50"
-										>
-											Cerrar sesión
-										</button>
-									</div>
-								)}
-							</div>
-						</>
-					)}
-				</div>
-			</div>
-		</nav>
-	);
+  function handleSignOut() {
+    try {
+      clearSession();
+    } catch {
+      // ignore
+    }
+    setOpen(false);
+    router.replace("/");
+  }
+
+  return (
+    <nav className="w-full border-b border-rose-100 bg-white/60 backdrop-blur-sm">
+      <div className="max-w-6xl mx-auto px-6 py-3 flex items-center">
+        <Link href="/" className="text-lg font-bold text-rose-700">
+          FitnessFR
+        </Link>
+
+        {/* Centro / navegación principal */}
+        <div className="ml-6 hidden md:flex items-center gap-4">
+          <Link href="/workout" className="text-sm font-medium text-gray-700 hover:text-rose-700">
+            Workout
+          </Link>
+          <Link href="/progress" className="text-sm font-medium text-gray-700 hover:text-rose-700">
+            Progress
+          </Link>
+        </div>
+
+        {/* Right: user / auth actions */}
+        <div className="ml-auto flex items-center gap-4 relative">
+          {currentUser ? (
+            <div className="flex items-center gap-3">
+              <div className="flex flex-col text-right">
+                <span className="text-sm font-medium text-rose-700">{displayName()}</span>
+                <span className="text-xs text-rose-500">{currentUser.email}</span>
+              </div>
+
+              <button
+                onClick={() => setOpen((v) => !v)}
+                aria-label="Abrir menú de usuario"
+                className="w-10 h-10 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center font-semibold"
+              >
+                {initials()}
+              </button>
+
+              {open && (
+                <div className="absolute right-0 top-12 bg-white border rounded shadow-md px-3 py-2 z-50">
+                  <Link href="/profile" className="block px-2 py-1 text-sm text-gray-700 hover:bg-gray-50">
+                    Perfil
+                  </Link>
+                  <button onClick={handleSignOut} className="w-full text-left px-2 py-1 text-sm text-gray-700 hover:bg-gray-50">
+                    Cerrar sesión
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link href="/login" className="text-sm font-medium text-gray-700 hover:text-rose-700">
+                Iniciar
+              </Link>
+              <Link href="/signup" className="text-sm font-medium text-white bg-rose-600 px-3 py-1 rounded hover:bg-rose-700">
+                Crear cuenta
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </nav>
+  );
 }
