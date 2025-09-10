@@ -27,8 +27,8 @@ export const NavBar = () => {
                  bg-[linear-gradient(90deg,rgba(28,29,60,0.85),rgba(24,24,50,0.78),rgba(20,22,48,0.85))]
                  backdrop-blur-md border-b border-indigo-400/15"
     >
-      <div className="mx-auto max-w-7xl w-full px-4 flex items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-semibold text-indigo-100">
+      <div className="mx-auto w-full max-w-screen-2xl px-2 sm:px-4 flex items-center justify-between">
+        <Link href="/" className="flex items-center gap-2 font-semibold text-indigo-100 min-w-max">
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-blue-600 text-white font-bold shadow">
             FF
           </span>
@@ -37,14 +37,15 @@ export const NavBar = () => {
           </span>
         </Link>
 
-        <div className="hidden lg:flex items-center gap-2">
+        {/* Scrollable nav links for desktop */}
+        <div className="hidden lg:flex items-center gap-2 overflow-x-auto scrollbar-thin scrollbar-thumb-indigo-400/30 max-w-[70vw] min-w-0">
           {filtered.map(item => (
             <NavLink key={item.href} href={item.href}>{item.label}</NavLink>
           ))}
           {!loading && user && (
             <button
               onClick={logout}
-              className="px-3 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition"
+              className="px-3 py-2 rounded-xl text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-500 transition whitespace-nowrap"
             >
               Salir
             </button>
