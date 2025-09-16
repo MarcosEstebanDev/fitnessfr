@@ -11,15 +11,40 @@ import { getMockWorkoutsByDate } from "../../mocks/workouts";
 import { motion } from "framer-motion";
 import { BackgroundByRoute } from "@/components/layout/BackgroundByRoute";
 
-const STORAGE_KEY = "ffr.workouts.v1";
+const WORKOUTS_KEY = "ffr.workouts.v1";
 
-export default function Workout() {
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [workoutsByDate, setWorkoutsByDate] = useState<Record<string, WorkoutRecord[]>>({});
+export default function WorkoutsPage() {
+  // workouts: siempre será un mapping fechaKey -> WorkoutRecord[]
+  const [workouts, setWorkouts] = useState<Record<string, WorkoutRecord[]>>(() => {
+    try {
+      const raw = localStorage.getItem(WORKOUTS_KEY);
+      if (!raw) return {};
+      const parsed = JSON.parse(raw);
+      // Si viene como array, convertir a map por fecha
+      if (Array.isArray(parsed)) {
+        const out: Record<string, WorkoutRecord[]> = {};
+        for (const w of parsed) {
+          const d = w.createdAt ? new Date(w.createdAt) : new Date();
+          const k = dateKey(d);
+          if (!out[k]) out[k] = [];
+          out[k].push(w);
+        }
+        return out;
+      }
+      // Si ya es objeto mapeado, devolverlo tal cual
+      if (parsed && typeof parsed === "object") return parsed;
+      return {};
+    } catch {
+      return {};
+    }
+  });
+
+  // Estados UI faltantes
+  const [modalOpen, setModalOpen] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showForm, setShowForm] = useState(false);
 
-  // Evitar mismatches SSR/CSR: renderizar partes dependientes del navegador solo después del mount
-  const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -57,50 +82,70 @@ export default function Workout() {
     return out;
   }
 
-  // Load/Persist (usa mocks si no hay nada en localStorage)
+  // Carga inicial: si no hay nada, usar mocks (ya mapeados)
   useEffect(() => {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(WORKOUTS_KEY);
     if (raw) {
       try {
         const parsed = JSON.parse(raw);
-        if (Object.keys(parsed).length > 0) {
-          setWorkoutsByDate(parsed);
+        if (parsed && typeof parsed === "object" && Object.keys(parsed).length > 0) {
+          // si es array lo convertimos en la inicialización de arriba, aquí aceptamos objeto mapeado
+          if (Array.isArray(parsed)) {
+            const out: Record<string, WorkoutRecord[]> = {};
+            for (const w of parsed) {
+              const k = dateKey(new Date(w.createdAt || Date.now()));
+              if (!out[k]) out[k] = [];
+              out[k].push(w);
+            }
+            setWorkouts(out);
+            return;
+          }
+          setWorkouts(parsed);
           return;
         }
       } catch {}
     }
     const mocks = getMockWorkoutsByDate();
     const mapped = mapMockWorkoutsToWorkoutRecords(mocks);
-    setWorkoutsByDate(mapped);
+    setWorkouts(mapped);
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(mapped));
+      localStorage.setItem(WORKOUTS_KEY, JSON.stringify(mapped));
     } catch {}
   }, []);
+
+  // Persistir cambios (siempre se guarda el mapping)
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(workoutsByDate));
-  }, [workoutsByDate]);
+    try {
+      localStorage.setItem(WORKOUTS_KEY, JSON.stringify(workouts));
+    } catch (err) {
+      console.error("Error saving workouts:", err);
+    }
+  }, [workouts]);
 
   const k = useMemo(() => dateKey(selectedDate), [selectedDate]);
-  const dayWorkouts = workoutsByDate[k] ?? [];
+  const dayWorkouts = workouts[k] ?? [];
 
+  // Guardar nuevo workout en el map para la fecha seleccionada
   function saveWorkout(input: Omit<WorkoutRecord, "id" | "createdAt">) {
     const toSave: WorkoutRecord = {
       ...input,
-      id: crypto.randomUUID(),
+      id: crypto?.randomUUID?.() ?? String(Date.now()),
       createdAt: new Date().toISOString(),
     };
-    setWorkoutsByDate((prev) => ({
-      ...prev,
-      [k]: [...(prev[k] || []), toSave],
-    }));
+    setWorkouts((prev) => {
+      const next = { ...prev };
+      next[k] = [...(next[k] || []), toSave];
+      return next;
+    });
     setShowForm(false);
   }
 
   function deleteWorkout(id: string) {
-    setWorkoutsByDate((prev) => ({
-      ...prev,
-      [k]: (prev[k] || []).filter((w) => w.id !== id),
-    }));
+    setWorkouts((prev) => {
+      const next = { ...prev };
+      next[k] = (next[k] || []).filter((w) => w.id !== id);
+      return next;
+    });
   }
 
   return (

@@ -25,29 +25,33 @@ export const ProgressForm = ({ onSubmit }: Props) => {
 
   return (
     <form onSubmit={submit} className="space-y-4 animate-fade-in">
-      <div className="grid md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end">
         <Input
           label="Fecha"
           type="date"
           value={entry.date}
+          className="w-full"
           onChange={e => setEntry(v => ({ ...v, date: e.target.value }))}
         />
         <Input
           label="Peso (kg)"
           type="number"
           value={entry.weight ?? ""}
+          className="w-full"
           onChange={e => setEntry(v => ({ ...v, weight: e.target.value ? Number(e.target.value) : undefined }))}
         />
         <Input
           label="% Grasa"
           type="number"
           value={entry.bodyFat ?? ""}
+          className="w-full"
           onChange={e => setEntry(v => ({ ...v, bodyFat: e.target.value ? Number(e.target.value) : undefined }))}
         />
         <Input
           label="Músculo (kg)"
           type="number"
           value={entry.muscleMass ?? ""}
+          className="w-full"
           onChange={e => setEntry(v => ({ ...v, muscleMass: e.target.value ? Number(e.target.value) : undefined }))}
         />
       </div>
