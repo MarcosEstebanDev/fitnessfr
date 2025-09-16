@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { useEffect, useState } from "react";
 import {
   LineChart,
@@ -39,24 +40,32 @@ interface Props {
 }
 
 const WORKOUTS_STORAGE_KEY = "ffr.workouts.v1";
-// Cambiado a key inexistente para romper la lectura de progreso
 const PROGRESS_STORAGE_KEY = "ffr.progress.v1";
 
+/**
+ * Convierte distintos formatos de fecha a timestamp (ms).
+ * Retorna NaN si no puede parsear.
+ */
 const parseDateToTs = (raw: unknown): number => {
   if (raw === undefined || raw === null || raw === "") return NaN;
   if (typeof raw === "number") return raw;
   if (raw instanceof Date) return raw.getTime();
   if (typeof raw === "string") {
     const s = raw.trim();
+    // timestamp en string
     if (/^\d+$/.test(s)) return Number(s);
+    // ISO u otros formatos reconocidos por Date.parse
     const iso = Date.parse(s);
     if (!Number.isNaN(iso)) return iso;
+    // fallback YYYY-MM-DD
     const parts = s.split("-");
     if (parts.length === 3) {
       const y = Number(parts[0]);
       const m = Number(parts[1]) - 1;
       const d = Number(parts[2]);
-      if (!Number.isNaN(y) && !Number.isNaN(m) && !Number.isNaN(d)) return new Date(y, m, d).getTime();
+      if (!Number.isNaN(y) && !Number.isNaN(m) && !Number.isNaN(d)) {
+        return new Date(y, m, d).getTime();
+      }
     }
   }
   return NaN;
@@ -73,34 +82,31 @@ const parseNumber = (v: unknown): number => {
   return 0;
 };
 
+/**
+ * Normaliza ffr.progress.v1 en un array plano de objetos con campo `date`.
+ * Acepta:
+ *  - array ya formado
+ *  - object donde valores son objetos o arrays (por fecha)
+ */
 const normalizeProgressStore = (raw: any): any[] => {
   if (!raw) return [];
   if (Array.isArray(raw)) return raw;
-  if (typeof raw === "object") {
-    // object may be { "2025-09-01": [{...}], "2025-09-16": {...} } or values as single objects
-    const vals = Object.values(raw);
-    // flatten one level
-    const flat = (vals.flat && typeof vals.flat === "function") ? vals.flat() : ([] as any).concat(...vals);
-    // if flat items are primitives or not objects, fallback to mapping entries to {date: key, ...value}
-    const items: any[] = [];
-    if (flat.length && flat.every((it) => it && typeof it === "object")) {
-      return flat;
-    }
-    // fallback: map entries where value is object -> include key as date
-    for (const [k, v] of Object.entries(raw)) {
-      if (Array.isArray(v)) {
-        v.forEach((it) => {
-          items.push(Object.assign({}, it, { date: it.date ?? it.createdAt ?? k }));
-        });
-      } else if (v && typeof v === "object") {
-        items.push(Object.assign({}, v, { date: v.date ?? v.createdAt ?? k }));
-      } else {
-        // primitive value (ignore)
+  if (typeof raw !== "object") return [];
+
+  const items: any[] = [];
+  for (const [k, v] of Object.entries(raw)) {
+    if (Array.isArray(v)) {
+      for (const it of v) {
+        if (it && typeof it === "object") {
+          // crear copia plana y asegurar campo date
+          items.push(Object.assign({}, it, { date: (it as any).date ?? (it as any).createdAt ?? k }));
+        }
       }
+    } else if (v && typeof v === "object") {
+      items.push(Object.assign({}, v, { date: (v as any).date ?? (v as any).createdAt ?? k }));
     }
-    return items;
   }
-  return [];
+  return items;
 };
 
 export const MetricChart = ({ meta, param = "peso", unidad = "kg", dataOverride, data }: Props) => {
@@ -128,46 +134,44 @@ export const MetricChart = ({ meta, param = "peso", unidad = "kg", dataOverride,
       return;
     }
 
-    // intentar progress store (con logs y mock en localhost si no existe)
+    // intentar progress store (con logs). no se inserta mock automáticamente
     try {
-      let rawProgress = localStorage.getItem(PROGRESS_STORAGE_KEY);
-      console.log("MetricChart: rawProgress key value:", PROGRESS_STORAGE_KEY, rawProgress);
-      // Insert mock data automatically solo en localhost para debug si no hay nada
-      if (!rawProgress && typeof window !== "undefined" && window.location && window.location.hostname === "localhost") {
-        const mock = [{ date: "2025-08-26", peso: 80 }, { date: "2025-09-01", peso: 78.5 }, { date: "2025-09-16", peso: 77 }];
-        console.log("MetricChart: inserting mock progress (dev)", mock);
-        localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(mock));
-        rawProgress = localStorage.getItem(PROGRESS_STORAGE_KEY);
-      }
+      const rawProgress = localStorage.getItem(PROGRESS_STORAGE_KEY);
       if (rawProgress) {
-        const parsed = JSON.parse(rawProgress);
-        console.log("MetricChart: parsedProgress (raw -> parsed)", parsed);
-        const progressArr = normalizeProgressStore(parsed);
-        console.log("MetricChart: normalized progress array (length)", progressArr.length, progressArr.slice(0, 5));
-        if (progressArr.length) {
-          const mapped = progressArr
-            .map((p: any) => {
-              const dateVal = p.date ?? p.createdAt ?? p.ts ?? Object.keys(p)[0];
-              const value =
-                param === "peso"
-                  ? (p.peso ?? p.weight ?? p.value ?? 0)
-                  : param === "sets"
-                  ? p.sets ?? 0
-                  : param === "reps"
-                  ? p.reps ?? p.repsTotal ?? 0
-                  : p.value ?? 0;
-              const ts = parseDateToTs(dateVal);
-              return { ts, name: Number.isNaN(ts) ? String(dateVal) : new Date(ts).toLocaleDateString(), value: parseNumber(value) };
-            })
-            .filter((p: any) => !Number.isNaN(p.ts) && Number.isFinite(p.value))
-            .sort((a: any, b: any) => a.ts - b.ts)
-            .map(({ name, value }: any) => ({ name, value }));
-          console.log("MetricChart: mapped progress", mapped);
-          setChartData(mapped);
-          return;
+        let parsed: any = null;
+        try {
+          parsed = JSON.parse(rawProgress);
+        } catch (e) {
+          console.error("MetricChart: invalid JSON in progress key", PROGRESS_STORAGE_KEY, e);
+        }
+        if (parsed) {
+          const progressArr = normalizeProgressStore(parsed);
+          console.log("MetricChart: normalized progress array (length)", progressArr.length);
+          if (progressArr.length) {
+            const mapped = progressArr
+              .map((p: any) => {
+                const dateVal = p.date ?? p.createdAt ?? p.ts ?? Object.keys(p)[0];
+                const value =
+                  param === "peso"
+                    ? (p.peso ?? p.weight ?? p.value ?? 0)
+                    : param === "sets"
+                    ? p.sets ?? 0
+                    : param === "reps"
+                    ? p.reps ?? p.repsTotal ?? 0
+                    : p.value ?? 0;
+                const ts = parseDateToTs(dateVal);
+                return { ts, name: Number.isNaN(ts) ? String(dateVal) : new Date(ts).toLocaleDateString(), value: parseNumber(value) };
+              })
+              .filter((p: any) => !Number.isNaN(p.ts) && Number.isFinite(p.value))
+              .sort((a: any, b: any) => a.ts - b.ts)
+              .map(({ name, value }: any) => ({ name, value }));
+            console.log("MetricChart: mapped progress", mapped);
+            setChartData(mapped);
+            return;
+          }
         }
       } else {
-        console.log("MetricChart: no rawProgress found");
+        console.log("MetricChart: no progress key in localStorage:", PROGRESS_STORAGE_KEY);
       }
     } catch (e) {
       console.error("MetricChart: progress read error", e);
@@ -186,7 +190,8 @@ export const MetricChart = ({ meta, param = "peso", unidad = "kg", dataOverride,
       if (Array.isArray(parsed)) workouts = parsed;
       else if (parsed && typeof parsed === "object") {
         const vals = Object.values(parsed) as any[];
-        const flat = (vals.flat && typeof vals.flat === "function") ? vals.flat() : ([] as any).concat(...vals);
+        // evitamos Array.flat por compatibilidad de target/lib
+        const flat: any[] = ([] as any[]).concat(...vals);
         workouts = flat.filter((x) => x && typeof x === "object");
       }
       console.log("MetricChart: resolved workouts count", workouts.length);
